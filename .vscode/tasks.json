@@ -1,0 +1,28 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++.exe build project",
+            "command": "C:/msys64/mingw64/bin/g++.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-O3",
+                "-g",
+                "${workspaceFolder}/Source/**.cpp",
+                "-o",
+                "${workspaceFolder}/Binaries/aoc2022.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ],
+    "version": "2.0.0"
+}
