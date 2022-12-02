@@ -168,11 +168,11 @@ inline bool IsSpace(std::string::value_type C)
     return std::isspace((unsigned char)C) != 0;
 }
 
-inline bool TryReadFileLines(const char* File, std::vector<std::string>& Lines)
+inline bool ForEachFileLine(const char* File, std::function<void(const std::string&)> Func)
 {
     std::ifstream FileStream(File);
 
-    if (!FileStream)
+    if (!FileStream.is_open())
     {
         return false;
     }
@@ -181,47 +181,55 @@ inline bool TryReadFileLines(const char* File, std::vector<std::string>& Lines)
 
     while (std::getline(FileStream, FileLine))
     {
-        Lines.push_back(FileLine);
+        Func(FileLine);
     }
 
     FileStream.close();
-    return true;
+
+    return !FileStream.bad();
+}
+
+inline bool TryReadFileLines(const char* File, std::vector<std::string>& Lines)
+{
+    return ForEachFileLine(File, [&Lines](const std::string& FileLine)
+    {
+        Lines.push_back(FileLine);
+    });
 }
 
 inline bool TryReadWholeFile(const char* File, std::string& Text)
 {
     std::ifstream FileStream(File);
 
-    if (!FileStream)
+    if (!FileStream.is_open())
     {
-        Text = std::string();
-
         return false;
     }
 
     std::stringstream StringStream;
     StringStream << FileStream.rdbuf();
 
-    Text = StringStream.str();;
+    Text.append(StringStream.str());
 
     FileStream.close();
-    return true;
+
+    return !FileStream.bad();
 }
 
 inline void ForEachStringSplit(std::string_view S, std::string_view Seperator, std::function<void(std::string_view)> Func)
 {
-    std::string_view::size_type   SeperatorOffsset = S.find(Seperator);
+    std::string_view::size_type   SeperatorOffset = S.find(Seperator);
     std::string_view              Fragment;
 
-    while (SeperatorOffsset != std::string_view::npos)
+    while (SeperatorOffset != std::string_view::npos)
     {
-        Fragment = S.substr(0, SeperatorOffsset);
+        Fragment = S.substr(0, SeperatorOffset);
         if (!Fragment.empty())
         {
             Func(Fragment);
         }
         S.remove_prefix(Fragment.size() + Seperator.size());
-        SeperatorOffsset = S.find(Seperator);
+        SeperatorOffset = S.find(Seperator);
     }
 
     // Handle the remaining string if there is any
