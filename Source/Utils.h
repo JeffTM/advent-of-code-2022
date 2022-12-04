@@ -160,12 +160,12 @@ size_t FindFirstEmptyValue(const std::vector<ValueType>& V, size_t Start = 0)
 
 inline bool IsDigit(std::string::value_type C)
 {
-    return std::isdigit((unsigned char)C) != 0;
+    return std::isdigit(C) != 0;
 }
 
 inline bool IsSpace(std::string::value_type C)
 {
-    return std::isspace((unsigned char)C) != 0;
+    return std::isspace(C) != 0;
 }
 
 inline bool ForEachFileLine(const char* File, std::function<void(const std::string&)> Func)

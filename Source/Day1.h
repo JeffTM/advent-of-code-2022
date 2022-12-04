@@ -36,7 +36,7 @@ namespace Day1
             }
         });
 
-        std::cout << "Most calories: " << Max << std::endl;
+        std::cout << "Part 1: " << Max << std::endl;
     }
 
     inline void Part2()
@@ -71,6 +71,6 @@ namespace Day1
 
         std::partial_sort(ElfSums.begin(), ElfSums.begin() + 3, ElfSums.end(), std::greater());
 
-        std::cout << "Sum of top 3: " << std::accumulate(ElfSums.begin(), ElfSums.begin() + 3, 0) << std::endl;
+        std::cout << "Part 2: " << std::accumulate(ElfSums.begin(), ElfSums.begin() + 3, 0) << std::endl;
     }
 }

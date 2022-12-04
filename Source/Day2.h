@@ -70,11 +70,11 @@ namespace Day2
 
     inline void Part1()
     {
-        std::cout << "Part 1 score: " << CalculateTotalScore(ScoreRoundPart1) << std::endl;
+        std::cout << "Part 1: " << CalculateTotalScore(ScoreRoundPart1) << std::endl;
     }
 
     inline void Part2()
     {
-        std::cout << "Part 2 score: " << CalculateTotalScore(ScoreRoundPart2) << std::endl;
+        std::cout << "Part 2: " << CalculateTotalScore(ScoreRoundPart2) << std::endl;
     }
 }
