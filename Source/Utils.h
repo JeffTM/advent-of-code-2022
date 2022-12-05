@@ -140,10 +140,6 @@ struct Vector3
     ValueType Z;
 };
 
-typedef Vector3<float>   FVector;
-typedef Vector3<int32_t> IVector;
-typedef Vector3<int64_t> LVector;
-
 template <class ValueType>
 size_t FindFirstEmptyValue(const std::vector<ValueType>& V, size_t Start = 0)
 {
@@ -156,21 +152,6 @@ size_t FindFirstEmptyValue(const std::vector<ValueType>& V, size_t Start = 0)
     }
 
     return FindFirstEmptyValueNPos;
-}
-
-inline bool IsDigit(std::string::value_type C)
-{
-    return std::isdigit(C) != 0;
-}
-
-inline bool IsSpace(std::string::value_type C)
-{
-    return std::isspace(C) != 0;
-}
-
-inline bool IsUppercaseLetter(std::string::value_type C)
-{
-    return std::isupper(C);
 }
 
 inline bool ForEachFileLine(const char* File, std::function<void(const std::string&)> Func)
@@ -264,20 +245,4 @@ inline StringSplitSingleResult StringSplitSingle(std::string_view S, std::string
     const std::string_view::size_type SecondBegin = FirstEnd + Seperator.size();
 
     return StringSplitSingleResult(S.substr(0, FirstEnd), S.substr(SecondBegin));
-}
-
-inline std::string StringFilterSpace(const std::string_view& S)
-{
-    std::string Result;
-
-    Result.reserve(S.size());
-    for (std::string_view::size_type i = 0; i < S.size(); ++i)
-    {
-        if (!IsSpace(S[i]))
-        {
-            Result.push_back(S[i]);
-        }
-    }
-
-    return Result;
 }
