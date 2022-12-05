@@ -168,6 +168,11 @@ inline bool IsSpace(std::string::value_type C)
     return std::isspace(C) != 0;
 }
 
+inline bool IsUppercaseLetter(std::string::value_type C)
+{
+    return std::isupper(C);
+}
+
 inline bool ForEachFileLine(const char* File, std::function<void(const std::string&)> Func)
 {
     std::ifstream FileStream(File);
