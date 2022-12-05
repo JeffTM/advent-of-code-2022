@@ -26,8 +26,7 @@ namespace Day4
 
         bool Overlaps(const Range& Other) const
         {
-            return !(this->Start < Other.Start && this->End < Other.Start ||
-                     this->Start > Other.End   && this->End > Other.End);
+            return this->Start <= Other.End && this->End >= Other.Start;
         }
     };
 
