@@ -140,6 +140,90 @@ struct Vector3
     ValueType Z;
 };
 
+template <typename ValueType>
+class Matrix2D
+{
+public:
+    using ReferenceType      = std::vector<ValueType>::reference;
+    using ConstReferenceType = std::vector<ValueType>::const_reference;
+
+    Matrix2D()
+        : Dimensioner(0), Values()
+    {}
+
+    Matrix2D(std::size_t InDimensioner)
+        : Dimensioner(InDimensioner), Values()
+    {}
+
+    void Append(ValueType Value)
+    {
+        this->Values.push_back(Value);
+    }
+
+    ReferenceType Get(std::size_t Row, std::size_t Col)
+    {
+        return this->Values[Col * Dimensioner + Row];
+    }
+
+    ConstReferenceType Get(std::size_t Row, std::size_t Col) const
+    {
+        return this->Values[Col * Dimensioner + Row];
+    }
+
+    std::size_t GetDimensioner() const
+    {
+        return this->Dimensioner;
+    }
+
+    std::size_t GetRowSize() const
+    {
+        return this->GetDimensioner();
+    }
+
+    std::size_t GetColSize() const
+    {
+        return this->Values.size() / this->GetDimensioner();
+    }
+
+    void Set(std::size_t Row, std::size_t Col, ValueType Value)
+    {
+        this->Values[Col* Dimensioner + Row] = Value;
+    }
+
+    void SetDimensioner(std::size_t InDimensioner)
+    {
+        this->Dimensioner = InDimensioner;
+    }
+
+    friend std::ostream& operator<<(std::ostream& OutStream, const Matrix2D<ValueType>& Matrix)
+    {
+        std::size_t ValuesPrinted = 0;
+
+        for (const ValueType& Value : Matrix.Values)
+        {
+            OutStream << Value;
+
+            ++ValuesPrinted;
+
+            if (Matrix.Dimensioner != 0 && (ValuesPrinted % Matrix.Dimensioner) == 0)
+            {
+                OutStream << '\n';
+            }
+            else
+            {
+                OutStream << ' ';
+            }
+        }
+
+        return OutStream;
+    }
+
+protected:
+    std::size_t Dimensioner;
+
+    std::vector<ValueType> Values;
+};
+
 template <class ValueType>
 size_t FindFirstEmptyValue(const std::vector<ValueType>& V, size_t Start = 0)
 {

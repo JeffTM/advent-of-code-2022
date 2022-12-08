@@ -7,6 +7,7 @@
 #include "Day5.h"
 #include "Day6.h"
 #include "Day7.h"
+#include "Day8.h"
 
 int main()
 {
@@ -26,6 +27,8 @@ int main()
     Day6::Part2();
     Day7::Part1();
     Day7::Part2();
+    Day8::Part1();
+    Day8::Part2();
 
     auto EndTime = std::chrono::steady_clock::now();
     auto RunTime = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(EndTime - StartTime);
