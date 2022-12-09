@@ -6,6 +6,8 @@
 
 namespace Day8
 {
+    using IndexType = Matrix2D<uint8_t>::IndexType;
+
     inline Matrix2D<uint8_t> GetInput(const char* FileName)
     {
         std::string FileText;
@@ -26,7 +28,7 @@ namespace Day8
         return Input;
     }
 
-    inline bool IsTreeVisible(const Matrix2D<uint8_t>& Trees, std::size_t Row, std::size_t Col)
+    inline bool IsTreeVisible(const Matrix2D<uint8_t>& Trees, IndexType Row, IndexType Col)
     {
         const uint8_t CurrentTreeHeight = Trees.Get(Row, Col);
 
@@ -38,7 +40,7 @@ namespace Day8
         // Scan right
         bool bRightHit = false;
 
-        for (std::size_t i = Row + 1; i < Trees.GetRowSize(); ++i)
+        for (IndexType i = Row + 1; i < Trees.GetRowSize(); ++i)
         {
             if (Trees.Get(i, Col) >= CurrentTreeHeight)
             {
@@ -55,7 +57,7 @@ namespace Day8
         // Scan down
         bool bDownHit = false;
 
-        for (std::size_t i = Col + 1; i < Trees.GetColSize(); ++i)
+        for (IndexType i = Col + 1; i < Trees.GetColSize(); ++i)
         {
             if (Trees.Get(Row, i) >= CurrentTreeHeight)
             {
@@ -72,7 +74,7 @@ namespace Day8
         // Scan left
         bool bLeftHit = false;
 
-        for (std::size_t i = Row - 1; i != std::numeric_limits<std::size_t>::max(); --i)
+        for (IndexType i = Row - 1; i >= 0; --i)
         {
             if (Trees.Get(i, Col) >= CurrentTreeHeight)
             {
@@ -89,7 +91,7 @@ namespace Day8
         // Scan up
         bool bUpHit = false;
 
-        for (std::size_t i = Col - 1; i != std::numeric_limits<std::size_t>::max(); --i)
+        for (IndexType i = Col - 1; i >= 0; --i)
         {
             if (Trees.Get(Row, i) >= CurrentTreeHeight)
             {
@@ -101,12 +103,12 @@ namespace Day8
         return !bUpHit;
     }
 
-    inline std::size_t TreeScenicScore(const Matrix2D<uint8_t>& Trees, std::size_t Row, std::size_t Col)
+    inline IndexType TreeScenicScore(const Matrix2D<uint8_t>& Trees, IndexType Row, IndexType Col)
     {
         const uint8_t CurrentTreeHeight = Trees.Get(Row, Col);
 
         // Scan right
-        std::size_t RightScore = 1;
+        IndexType RightScore = 1;
 
         while (Row + RightScore < Trees.GetRowSize() - 1 && Trees.Get(Row + RightScore, Col) < CurrentTreeHeight)
         {
@@ -114,7 +116,7 @@ namespace Day8
         }
 
         // Scan down
-        std::size_t DownScore = 1;
+        IndexType DownScore = 1;
 
         while (Col + DownScore < Trees.GetColSize() - 1 && Trees.Get(Row, Col + DownScore) < CurrentTreeHeight)
         {
@@ -122,7 +124,7 @@ namespace Day8
         }
 
         // Scan left
-        std::size_t LeftScore = 1;
+        IndexType LeftScore = 1;
 
         while (Row - LeftScore != 0 && Trees.Get(Row - LeftScore, Col) < CurrentTreeHeight)
         {
@@ -130,7 +132,7 @@ namespace Day8
         }
 
         // Scan up
-        std::size_t UpScore = 1;
+        IndexType UpScore = 1;
 
         while (Col - UpScore != 0 && Trees.Get(Row, Col - UpScore) < CurrentTreeHeight)
         {
@@ -148,9 +150,9 @@ namespace Day8
 
         std::size_t Answer = 0;
 
-        for (std::size_t Col = 0; Col < Trees.GetRowSize(); ++Col)
+        for (IndexType Col = 0; Col < Trees.GetRowSize(); ++Col)
         {
-            for (std::size_t Row = 0; Row < Trees.GetRowSize(); ++Row)
+            for (IndexType Row = 0; Row < Trees.GetRowSize(); ++Row)
             {
                 if (IsTreeVisible(Trees, Row, Col))
                 {
@@ -172,16 +174,16 @@ namespace Day8
     {
         Matrix2D<uint8_t> Trees = GetInput("Inputs/day8.txt");
 
-        std::size_t Answer = 0;
+        IndexType Answer = 0;
 
-        //std::size_t AnswerRow = 0;
-        //std::size_t AnswerCol = 0;
+        //IndexType AnswerRow = 0;
+        //IndexType AnswerCol = 0;
 
-        for (std::size_t Col = 1; Col < Trees.GetRowSize() - 1; ++Col)
+        for (IndexType Col = 1; Col < Trees.GetRowSize() - 1; ++Col)
         {
-            for (std::size_t Row = 1; Row < Trees.GetRowSize() - 1; ++Row)
+            for (IndexType Row = 1; Row < Trees.GetRowSize() - 1; ++Row)
             {
-                std::size_t Score = TreeScenicScore(Trees, Row, Col);
+                IndexType Score = TreeScenicScore(Trees, Row, Col);
 
                 if (Score > Answer)
                 {

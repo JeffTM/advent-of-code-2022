@@ -31,6 +31,122 @@ struct StringSplitSingleResult
     }
 };
 
+namespace Math
+{
+    template<typename T>
+    T Clamp(T X, T Min, T Max)
+    {
+        return X < Min ? Min : Max < X ? Max : X;
+    }
+
+    template<typename T>
+    int Signum(T X)
+    {
+        return (T(0) < X) - (X < T(0));
+    }
+}
+
+template <typename ValueType>
+struct Vector2
+{
+    struct Hash
+    {
+        std::size_t operator()(const Vector2<ValueType>& Vec) const noexcept
+        {
+            constexpr std::size_t P1 = 73856093;
+            constexpr std::size_t P2 = 19349663;
+
+            return (Vec.X * P1) ^ (Vec.Y * P2);
+        }
+    };
+
+    constexpr Vector2()
+        : X(0), Y(0)
+    {}
+
+    constexpr explicit Vector2(ValueType All)
+        : X(All), Y(All)
+    {}
+
+    constexpr Vector2(ValueType X, ValueType Y)
+        : X(X), Y(Y)
+    {}
+
+    constexpr bool operator==(const Vector2<ValueType>& Other) const
+    {
+        return this->X == Other.X && this->Y == Other.Y;
+    }
+
+    constexpr bool operator!=(const Vector2<ValueType>& Other) const
+    {
+        return !(this->operator==(Other));
+    }
+
+    constexpr bool operator<(const Vector2<ValueType>& Other) const
+    {
+        if (this->X != Other.X)
+        {
+            return this->X < Other.X;
+        }
+
+        return this->Y < Other.Y;
+    }
+
+    constexpr Vector2<ValueType> operator+(const Vector2<ValueType>& Other) const
+    {
+        return Vector2<ValueType>(this->X + Other.X, this->Y + Other.Y);
+    }
+
+    constexpr void operator+=(const Vector2<ValueType>& Other)
+    {
+        this->X += Other.X;
+        this->Y += Other.Y;
+    }
+
+    constexpr Vector2<ValueType> operator-(const Vector2<ValueType>& Other) const
+    {
+        return Vector2<ValueType>(this->X - Other.X, this->Y - Other.Y);
+    }
+
+    constexpr Vector2<ValueType> operator/(ValueType Scalar) const
+    {
+        return Vector2<ValueType>(this->X / Scalar, this->Y / Scalar);
+    }
+
+    friend std::ostream& operator<<(std::ostream& OutStream, const Vector2<ValueType>& Vec)
+    {
+        return OutStream << '(' << Vec.X << ", " << Vec.Y << ')';
+    }
+
+    constexpr bool AnyZero() const
+    {
+        return this->X == 0 || this->Y == 0;
+    }
+
+    constexpr Vector2<ValueType> Clamp(ValueType Min, ValueType Max) const
+    {
+        return Vector2<ValueType>(Math::Clamp(this->X, Min, Max), Math::Clamp(this->Y, Min, Max));
+    }
+
+    constexpr bool IsZero() const
+    {
+        return this->X == 0 && this->Y == 0;
+    }
+
+    constexpr Vector2<ValueType> Signum() const
+    {
+        return Vector2<ValueType>(Math::Signum(this->X), Math::Signum(this->Y));
+    }
+
+    constexpr ValueType SizeSquared() const
+    {
+        return this->X * this->X + this->Y * this->Y;
+    }
+
+    ValueType X;
+    ValueType Y;
+};
+
 template <typename ValueType>
 struct Vector3
 {
@@ -88,6 +204,23 @@ struct Vector3
         return Vector3<ValueType>(this->X + Other.X, this->Y + Other.Y, this->Z + Other.Z);
     }
 
+    constexpr void operator+=(const Vector3<ValueType>& Other)
+    {
+        this->X += Other.X;
+        this->Y += Other.Y;
+        this->Z += Other.Z;
+    }
+
+    constexpr Vector3<ValueType> operator-(const Vector3<ValueType>& Other) const
+    {
+        return Vector3<ValueType>(this->X - Other.X, this->Y - Other.Y, this->Z - Other.Z);
+    }
+
+    constexpr Vector3<ValueType> operator/(ValueType Scalar) const
+    {
+        return Vector3<ValueType>(this->X / Scalar, this->Y / Scalar, this->Z / Scalar);
+    }
+
     friend std::ostream& operator<<(std::ostream& OutStream, const Vector3<ValueType>& Vec)
     {
         return OutStream << '(' << Vec.X << ", " << Vec.Y << ", " << Vec.Z << ')';
@@ -130,9 +263,29 @@ struct Vector3
         return Result;
     }
 
+    constexpr bool AnyZero() const
+    {
+        return this->X == 0 || this->Y == 0 || this->Z == 0;
+    }
+
+    constexpr Vector3<ValueType> Clamp(ValueType Min, ValueType Max) const
+    {
+        return Vector3<ValueType>(Math::Clamp(this->X, Min, Max), Math::Clamp(this->Y, Min, Max), Math::Clamp(this->Z, Min, Max));
+    }
+
     constexpr bool IsZero() const
     {
         return this->X == 0 && this->Y == 0 && this->Z == 0;
+    }
+
+    constexpr Vector3<ValueType> Signum() const
+    {
+        return Vector3<ValueType>(Math::Signum(this->X), Math::Signum(this->Y), Math::Signum(this->Z));
+    }
+
+    constexpr ValueType SizeSquared() const
+    {
+        return this->X * this->X + this->Y * this->Y + this->Z * this->Z;
     }
 
     ValueType X;
@@ -144,6 +297,7 @@ template <typename ValueType>
 class Matrix2D
 {
 public:
+    using IndexType          = int64_t;
     using ReferenceType      = std::vector<ValueType>::reference;
     using ConstReferenceType = std::vector<ValueType>::const_reference;
 
@@ -151,7 +305,7 @@ public:
         : Dimensioner(0), Values()
     {}
 
-    Matrix2D(std::size_t InDimensioner)
+    Matrix2D(IndexType InDimensioner)
         : Dimensioner(InDimensioner), Values()
     {}
 
@@ -160,44 +314,44 @@ public:
         this->Values.push_back(Value);
     }
 
-    ReferenceType Get(std::size_t Row, std::size_t Col)
+    ReferenceType Get(IndexType Row, IndexType Col)
     {
         return this->Values[Col * Dimensioner + Row];
     }
 
-    ConstReferenceType Get(std::size_t Row, std::size_t Col) const
+    ConstReferenceType Get(IndexType Row, IndexType Col) const
     {
         return this->Values[Col * Dimensioner + Row];
     }
 
-    std::size_t GetDimensioner() const
+    IndexType GetDimensioner() const
     {
         return this->Dimensioner;
     }
 
-    std::size_t GetRowSize() const
+    IndexType GetRowSize() const
     {
         return this->GetDimensioner();
     }
 
-    std::size_t GetColSize() const
+    IndexType GetColSize() const
     {
         return this->Values.size() / this->GetDimensioner();
     }
 
-    void Set(std::size_t Row, std::size_t Col, ValueType Value)
+    void Set(IndexType Row, IndexType Col, ValueType Value)
     {
         this->Values[Col* Dimensioner + Row] = Value;
     }
 
-    void SetDimensioner(std::size_t InDimensioner)
+    void SetDimensioner(IndexType InDimensioner)
     {
         this->Dimensioner = InDimensioner;
     }
 
     friend std::ostream& operator<<(std::ostream& OutStream, const Matrix2D<ValueType>& Matrix)
     {
-        std::size_t ValuesPrinted = 0;
+        IndexType ValuesPrinted = 0;
 
         for (const ValueType& Value : Matrix.Values)
         {
@@ -219,7 +373,7 @@ public:
     }
 
 protected:
-    std::size_t Dimensioner;
+    IndexType Dimensioner;
 
     std::vector<ValueType> Values;
 };
