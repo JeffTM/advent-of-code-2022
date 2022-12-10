@@ -23,6 +23,26 @@ namespace Day9
         return VectorType();
     }
 
+    inline void SimulateMove(const VectorType& MoveDirection, std::vector<VectorType>& Rope)
+    {
+        Rope.front() += MoveDirection;
+
+        for (std::size_t RopeIndex = 1; RopeIndex < Rope.size(); ++RopeIndex)
+        {
+            const VectorType Delta       = Rope[RopeIndex - 1] - Rope[RopeIndex];
+            const CoordType  DeltaSizeSq = Delta.SizeSquared();
+
+            if (DeltaSizeSq >= 4)
+            {
+                Rope[RopeIndex] += (Delta + Delta.Signum()) / 2;
+            }
+            else
+            {
+                return;
+            }
+        }
+    }
+
     inline std::size_t RunSimulation(const char* FileName, int RopeLength)
     {
         if (RopeLength <= 0)
@@ -38,43 +58,12 @@ namespace Day9
 
         ForEachFileLine(FileName, [&Rope, &TailVisited](const std::string& FileLine)
         {
-            if (FileLine.size() < 3) // In theory this is not necessary
-            {
-                return;
-            }
-
-            const char DirectionCode = FileLine[0];
-            const int  NumMoves      = std::stoi(FileLine.substr(2));
+            const VectorType MoveDirection = DirectionCodeToVector(FileLine[0]);
+            const int        NumMoves      = std::stoi(FileLine.substr(2));
 
             for (int MoveCounter = 0; MoveCounter < NumMoves; ++MoveCounter)
             {
-                Rope[0] += DirectionCodeToVector(DirectionCode);
-
-                // Potential optimization: only update if the previous part of the rope updated. Front always updates
-
-                for (int RopeIndex = 1; RopeIndex < Rope.size(); ++RopeIndex)
-                {
-                    const VectorType& Head = Rope[RopeIndex - 1];
-
-                    VectorType& Tail = Rope[RopeIndex];
-
-                    const VectorType Delta       = Head - Tail;
-                    const CoordType  DeltaSizeSq = Delta.SizeSquared();
-
-                    if (DeltaSizeSq >= 4)
-                    {
-                        Tail += (Delta + Delta.Signum()) / 2;
-                    }
-                }
-
-                /*
-                for (int RopeIndex = 0; RopeIndex < Rope.size(); ++RopeIndex)
-                {
-                    std::cout << Rope[RopeIndex] << ' ';
-                }
-                std::cout << std::endl;
-                */
-
+                SimulateMove(MoveDirection, Rope);
                 TailVisited.insert(Rope.back());
             }
         });

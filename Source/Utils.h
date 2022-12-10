@@ -108,6 +108,16 @@ struct Vector2
         return Vector2<ValueType>(this->X - Other.X, this->Y - Other.Y);
     }
 
+    constexpr friend Vector2<ValueType> operator*(ValueType Scalar, const Vector2<ValueType>& Vec)
+    {
+        return Vector2<ValueType>(Vec.X * Scalar, Vec.Y * Scalar);
+    }
+
+    constexpr Vector2<ValueType> operator*(ValueType Scalar) const
+    {
+        return Vector2<ValueType>(this->X * Scalar, this->Y * Scalar);
+    }
+
     constexpr Vector2<ValueType> operator/(ValueType Scalar) const
     {
         return Vector2<ValueType>(this->X / Scalar, this->Y / Scalar);
@@ -214,6 +224,16 @@ struct Vector3
     constexpr Vector3<ValueType> operator-(const Vector3<ValueType>& Other) const
     {
         return Vector3<ValueType>(this->X - Other.X, this->Y - Other.Y, this->Z - Other.Z);
+    }
+
+    constexpr friend Vector3<ValueType> operator*(ValueType Scalar, const Vector3<ValueType>& Vec)
+    {
+        return Vector3<ValueType>(Vec.X * Scalar, Vec.Y * Scalar, Vec.Z * Scalar);
+    }
+
+    constexpr Vector3<ValueType> operator*(ValueType Scalar) const
+    {
+        return Vector3<ValueType>(this->X * Scalar, this->Y * Scalar, this->Z * Scalar);
     }
 
     constexpr Vector3<ValueType> operator/(ValueType Scalar) const
