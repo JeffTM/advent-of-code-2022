@@ -29,7 +29,7 @@ namespace Day11
             }
             else if (this->Operation == EOperation::Multiply)
             {
-                Item *= Operand;
+                Item *= this->Operand;
             }
             else
             {

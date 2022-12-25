@@ -334,6 +334,12 @@ public:
         this->Values.push_back(Value);
     }
 
+    void Clear()
+    {
+        this->Dimensioner = 0;
+        this->Values.clear();
+    }
+
     ReferenceType Get(IndexType Row, IndexType Col)
     {
         return this->Values[Col * Dimensioner + Row];
