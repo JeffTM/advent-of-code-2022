@@ -329,7 +329,7 @@ public:
         : Dimensioner(InDimensioner), Values()
     {}
 
-    void Append(ValueType Value)
+    void Append(const ValueType& Value)
     {
         this->Values.push_back(Value);
     }
@@ -340,14 +340,24 @@ public:
         this->Values.clear();
     }
 
+    ReferenceType Get(IndexType Index)
+    {
+        return this->Values[Index];
+    }
+
+    ConstReferenceType Get(IndexType Index) const
+    {
+        return this->Values[Index];
+    }
+
     ReferenceType Get(IndexType Row, IndexType Col)
     {
-        return this->Values[Col * Dimensioner + Row];
+        return this->Values[this->RowColToIndex(Row, Col)];
     }
 
     ConstReferenceType Get(IndexType Row, IndexType Col) const
     {
-        return this->Values[Col * Dimensioner + Row];
+        return this->Values[this->RowColToIndex(Row, Col)];
     }
 
     IndexType GetDimensioner() const
@@ -365,9 +375,35 @@ public:
         return this->Values.size() / this->GetDimensioner();
     }
 
-    void Set(IndexType Row, IndexType Col, ValueType Value)
+    IndexType GetTotalSize() const
     {
-        this->Values[Col* Dimensioner + Row] = Value;
+        return this->Values.size();
+    }
+
+    bool IsValidRowCol(IndexType Row, IndexType Col) const
+    {
+        return Row >= 0 && Row < this->GetRowSize() && Col >= 0 && Col < this->GetColSize();
+    }
+
+    void IndexToRowCol(IndexType InIndex, IndexType& OutRow, IndexType& OutCol) const
+    {
+        OutRow = InIndex % this->GetDimensioner();
+        OutCol = InIndex / this->GetDimensioner();
+    }
+
+    IndexType RowColToIndex(IndexType Row, IndexType Col) const
+    {
+        return Col * this->Dimensioner + Row;
+    }
+
+    void Set(IndexType Index, const ValueType& Value)
+    {
+        this->Values[Index] = Value;
+    }
+
+    void Set(IndexType Row, IndexType Col, const ValueType& Value)
+    {
+        this->Values[this->RowColToIndex(Row, Col)] = Value;
     }
 
     void SetDimensioner(IndexType InDimensioner)
